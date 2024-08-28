@@ -1,0 +1,70 @@
+<div class="container">
+  <!-- Botones de vista -->
+  <div class="d-flex justify-content-center my-3">
+    <button class="btn btn-primary mx-2" (click)="setView('month')">M</button>
+    <button class="btn btn-primary mx-2" (click)="setView('week')">S</button>
+    <button class="btn btn-primary mx-2" (click)="setView('day')">D</button>
+    <button class="btn btn-primary mx-2" (click)="goToToday()">Hoy</button>
+  </div>
+
+
+  <div *ngIf="view === 'month'">
+    <h2 class="text-center">{{ currentDate | date: 'MMMM yyyy' }}</h2>
+    <div class="row">
+      <div class="col-1" *ngFor="let day of getDaysInMonth()">
+        <div class="border p-2" (click)="openModal(day)">
+          {{ day }}
+          <div *ngFor="let event of getEventsForDay(currentYear, currentMonth, day)">
+            <small>{{ event.title }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="view === 'week'">
+    <h2 class="text-center">Semana del {{ currentWeekStart | date: 'dd/MM/yyyy' }}</h2>
+    <div class="row">
+      <div class="col-1" *ngFor="let day of getDaysOfWeek()">
+        <div class="border p-2" (click)="openModal(day.getDate())">
+          {{ day | date: 'dd/MM/yyyy' }}
+          <div *ngFor="let event of getEventsForDay(day.getFullYear(), day.getMonth(), day.getDate())">
+            <small>{{ event.title }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <div *ngIf="view === 'day'">
+    <h2 class="text-center">{{ currentDay | date: 'dd/MM/yyyy' }}</h2>
+    <div class="border p-2" *ngFor="let event of getEventsForDay(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate())">
+      <span>{{ event.title }}</span>
+    </div>
+    <button class="btn btn-secondary" (click)="openModal(currentDay.getDate())">Agregar Evento</button>
+  </div>
+</div>
+
+
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Event</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text" [(ngModel)]="newEventTitle" placeholder="Event Title" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveEvent()">Save Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
